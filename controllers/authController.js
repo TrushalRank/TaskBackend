@@ -3,17 +3,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendVerificationEmail } = require("../services/emailService");
 
-// Email & Password Validation Regex
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
 exports.signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    // Validation
+    if (!name || !email || !password) return res.status(400).json({ message: "All fields are required" });
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -51,9 +46,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Email not verified. Please check your inbox." });
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || "supersecretkey", {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || "supersecretkey");
 
     res.status(200).json({ message: "Login successful", token, user: { id: user._id, email, name: user.name} });
   } catch (error) {
