@@ -3,7 +3,8 @@ const Task = require("../models/Task");
 // ✅ Create a new task
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, userId } = req.body;
+    const userId = req.user._id;
+    const { title, description } = req.body;
 
     if (!title) return res.status(400).json({ message: "Title is required." });
     if (!userId) return res.status(400).json({ message: "User ID is required." });
@@ -34,7 +35,7 @@ exports.getAllTasks = async (req, res) => {
 // ✅ Get a specific task
 exports.getTaskById = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user._id;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
@@ -53,7 +54,7 @@ exports.getTaskById = async (req, res) => {
 // ✅ Update a task
 exports.updateTask = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user._id;
     const { title, description, completed } = req.body;
     const { id: taskId } = req.params;
 
@@ -77,7 +78,7 @@ exports.updateTask = async (req, res) => {
 // ✅ Delete a task
 exports.deleteTask = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user._id;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
