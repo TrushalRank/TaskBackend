@@ -55,7 +55,7 @@ exports.getTaskById = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { title, description, completed } = req.body;
+    const { title, description } = req.body;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
@@ -63,7 +63,7 @@ exports.updateTask = async (req, res) => {
 
     const updatedTask = await Task.findOneAndUpdate(
       { _id: taskId, userId },
-      { title, description, completed },
+      { title, description },
       { new: true }
     );
 
