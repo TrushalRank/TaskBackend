@@ -20,7 +20,8 @@ exports.createTask = async (req, res) => {
 // ✅ Get all tasks for logged-in user
 exports.getAllTasks = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.user._id;
+    
     if (!userId) return res.status(400).json({ message: "User ID is required." });
 
     const tasks = await Task.find({ userId });
@@ -33,7 +34,7 @@ exports.getAllTasks = async (req, res) => {
 // ✅ Get a specific task
 exports.getTaskById = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.user.userId;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
@@ -41,7 +42,7 @@ exports.getTaskById = async (req, res) => {
 
     const task = await Task.findOne({ _id: taskId, userId });
 
-    if (!task) return res.status(404).json({ message: "Task not found or unauthorized." });
+    if (!task) return res.status(404).json({ message: "Information not found." });
 
     res.json({ message: "Task fetched successfully.", task });
   } catch (error) {
@@ -52,7 +53,8 @@ exports.getTaskById = async (req, res) => {
 // ✅ Update a task
 exports.updateTask = async (req, res) => {
   try {
-    const { title, description, completed, userId } = req.body;
+    const userId = req.user.userId;
+    const { title, description, completed } = req.body;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
@@ -64,7 +66,7 @@ exports.updateTask = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedTask) return res.status(404).json({ message: "Task not found or unauthorized." });
+    if (!updatedTask) return res.status(404).json({ message: "Information not found." });
 
     res.json({ message: "Task updated successfully.", updatedTask });
   } catch (error) {
@@ -75,7 +77,7 @@ exports.updateTask = async (req, res) => {
 // ✅ Delete a task
 exports.deleteTask = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.user.userId;
     const { id: taskId } = req.params;
 
     if (!taskId) return res.status(400).json({ message: "Task ID is required." });
@@ -83,7 +85,7 @@ exports.deleteTask = async (req, res) => {
 
     const deletedTask = await Task.findOneAndDelete({ _id: taskId, userId });
 
-    if (!deletedTask) return res.status(404).json({ message: "Task not found or unauthorized." });
+    if (!deletedTask) return res.status(404).json({ message: "Information not found." });
 
     res.json({ message: "Task deleted successfully." });
   } catch (error) {
